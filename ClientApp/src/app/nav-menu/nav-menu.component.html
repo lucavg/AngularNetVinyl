@@ -1,0 +1,82 @@
+<header class="mb-4">
+  <nav class="bg-gray-900">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <a class="text-xl font-bold text-white" [routerLink]="['/']">AngularNetVinyl</a>
+        <button
+        class="block sm:hidden text-white focus:outline-none"
+        (click)="toggle()"
+      >
+        <svg
+          class="h-6 w-6 fill-current text-white"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+        >
+        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+        </svg>
+      </button>
+        <div class="hidden sm:flex sm:items-center">
+          <a
+            class="ml-4 text-white hover:text-gray-300"
+            [routerLink]="['/']"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="text-gray-300"
+            (click)="closeMenu()"
+          >
+            Home
+          </a>
+          <a
+            class="ml-4 text-white hover:text-gray-300"
+            [routerLink]="['/counter']"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="text-gray-300"
+            (click)="closeMenu()"
+          >
+            Search
+          </a>
+          <a
+            class="ml-4 text-white hover:text-gray-300"
+            [routerLink]="['/fetch-data']"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="text-gray-300"
+            (click)="closeMenu()"
+          >
+            Library
+          </a>
+        </div>
+      </div>
+      <div
+        [ngClass]="{ 'block': isExpanded, 'hidden': !isExpanded }"
+        class="hidden sm:hidden mt-4"
+      >
+        <a
+          class="block text-center text-white hover:text-gray-300 py-2"
+          [routerLink]="['/']"
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="text-gray-300"
+          (click)="closeMenu()"
+        >
+          Home
+        </a>
+        <a
+          class="block text-center text-white hover:text-gray-300 py-2"
+          [routerLink]="['/counter']"
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="text-gray-300"
+          (click)="closeMenu()"
+        >
+          Counter
+        </a>
+        <a
+          class="block text-center text-white hover:text-gray-300 py-2"
+          [routerLink]="['/fetch-data']"
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="text-gray-300"
+          (click)="closeMenu()"
+        >
+          Fetch data
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>

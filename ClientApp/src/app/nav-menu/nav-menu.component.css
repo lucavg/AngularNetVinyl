@@ -1,0 +1,21 @@
+@media (min-width: 640px) {
+  .sm\\:flex {
+    display: flex !important;
+  }
+
+  .sm\\:hidden {
+    display: none !important;
+  }
+
+  .sm\\:items-center {
+    align-items: center !important;
+  }
+
+  .sm\\:justify-between {
+    justify-content: space-between !important;
+  }
+
+  .sm\\:inline-block {
+    display: inline-block !important;
+  }
+}

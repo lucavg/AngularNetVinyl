@@ -1,0 +1,24 @@
+<h1 id="tableLabel" class="text-2xl font-bold mb-4">Weather forecast</h1>
+
+<p class="mb-4">This component demonstrates fetching data from the server.</p>
+
+<p *ngIf="!forecasts?.length" class="italic">Loading...</p>
+
+<table class="table table-striped bg-white shadow-md rounded-lg overflow-hidden" aria-labelledby="tableLabel" *ngIf="forecasts.length">
+  <thead>
+    <tr>
+      <th class="py-2 px-4">Date</th>
+      <th class="py-2 px-4">Temp. (C)</th>
+      <th class="py-2 px-4">Temp. (F)</th>
+      <th class="py-2 px-4">Summary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let forecast of forecasts">
+      <td class="py-2 px-4">{{ forecast.date }}</td>
+      <td class="py-2 px-4">{{ forecast.temperatureC }}</td>
+      <td class="py-2 px-4">{{ forecast.temperatureF }}</td>
+      <td class="py-2 px-4">{{ forecast.summary }}</td>
+    </tr>
+  </tbody>
+</table>
