@@ -130,9 +130,20 @@ namespace AngularNetVinyl.Controllers
                     return new LoginResponse
                     {
                         Success = false,
-                        Message = "Invalid credentials"
+                        Message = "Email is not registered."
                     };
                 }
+
+                var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
+                if (!passwordValid)
+                {
+                    return new LoginResponse
+                    {
+                        Success = false,
+                        Message = "Check your password."
+                    };
+                }
+
                 var claims = new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName!),
@@ -158,7 +169,7 @@ namespace AngularNetVinyl.Controllers
                 {
                     AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
                     Message = "Login successful",
-                    Email = user.Email!,
+                    Username = user.UserName!,
                     Success = true,
                     UserId = user.Id.ToString(),
                 };

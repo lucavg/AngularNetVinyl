@@ -2,19 +2,21 @@
   <nav class="bg-gray-900">
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between h-16">
-        <a class="text-xl font-bold text-white" [routerLink]="['/']">AngularNetVinyl</a>
-        <button
-        class="block sm:hidden text-white focus:outline-none"
-        (click)="toggle()"
-      >
-        <svg
-          class="h-6 w-6 fill-current text-white"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
+        <a class="text-xl font-bold text-white" [routerLink]="['/']"
+          >AngularNetVinyl</a
         >
-        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
-        </svg>
-      </button>
+        <button
+          class="block sm:hidden text-white focus:outline-none"
+          (click)="toggle()"
+        >
+          <svg
+            class="h-6 w-6 fill-current text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+          </svg>
+        </button>
         <div class="hidden sm:flex sm:items-center">
           <a
             class="ml-4 text-white hover:text-gray-300"
@@ -43,10 +45,38 @@
           >
             Library
           </a>
+          <ng-container *ngIf="!isLoggedIn()">
+            <a
+              class="ml-4 text-white hover:text-gray-300"
+              [routerLink]="['/register']"
+              [routerLinkActiveOptions]="{ exact: true }"
+              routerLinkActive="text-gray-300"
+              (click)="closeMenu()"
+            >
+              Register
+            </a>
+            <a
+              class="ml-4 text-white hover:text-gray-300"
+              [routerLink]="['/login']"
+              [routerLinkActiveOptions]="{ exact: true }"
+              routerLinkActive="text-gray-300"
+              (click)="closeMenu()"
+            >
+              Login
+            </a>
+          </ng-container>
+          <ng-container *ngIf="isLoggedIn()">
+            <button
+              class="ml-4 text-white hover:text-gray-300"
+              (click)="logout()"
+            >
+              Logout
+            </button>
+          </ng-container>
         </div>
       </div>
       <div
-        [ngClass]="{ 'block': isExpanded, 'hidden': !isExpanded }"
+        [ngClass]="{ block: isExpanded, hidden: !isExpanded }"
         class="hidden sm:hidden mt-4"
       >
         <a
@@ -76,6 +106,37 @@
         >
           Fetch data
         </a>
+        <ng-container *ngIf="!isLoggedIn()">
+          <a
+            class="block text-center text-white hover:text-gray-300 py-2"
+            [routerLink]="['/register']"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="text-gray-300"
+            (click)="closeMenu()"
+          >
+            Register
+          </a>
+          <a
+            class="block text-center text-white hover:text-gray-300 py-2"
+            [routerLink]="['/login']"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="text-gray-300"
+            (click)="closeMenu()"
+          >
+            Login
+          </a>
+        </ng-container>
+        <ng-container *ngIf="isLoggedIn()">
+          <a
+            [routerLink]="['/']"
+            class="block text-center text-white hover:text-gray-300 py-2"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="text-gray-300"
+            (click)="logout()"
+          >
+            Logout
+          </a>
+        </ng-container>
       </div>
     </div>
   </nav>
