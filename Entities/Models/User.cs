@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.Identity;
+using AspNetCore.Identity.MongoDbCore.Models;
+using MongoDbGenericRepository.Attributes;
 
-public class User : IdentityUser
+[CollectionName("users")]
+public class User : MongoIdentityUser<Guid>
 {
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
+    public string Username { get; set; } = string.Empty;
 }
