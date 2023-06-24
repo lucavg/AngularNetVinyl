@@ -19,12 +19,14 @@ namespace AngularNetVinyl.Controllers
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly CollectionController _collectionController;
+        private readonly IMongoCollection<User> _usersCollection;
 
-        public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager, CollectionController collectionController)
+        public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager, CollectionController collectionController, IMongoDatabase database)
         {
             _collectionController = collectionController;
             _userManager = userManager;
             _roleManager = roleManager;
+            _usersCollection = database.GetCollection<User>("users");
         }
 
         [HttpPost]
@@ -207,6 +209,31 @@ namespace AngularNetVinyl.Controllers
                     Success = false,
                     Message = ex.Message
                 };
+            }
+        }
+
+        [HttpGet]
+        [Route("users/get")]
+        public async Task<IActionResult> GetUserCollectionById(string id)
+        {
+            try
+            {
+                var filter = Builders<User>.Filter.Eq("Id", id);
+                var projection = Builders<User>.Projection.Include("CollectionId");
+                var user = await _usersCollection.Find(filter).Project(projection).FirstOrDefaultAsync();
+                Console.WriteLine(user);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest();
             }
         }
     }

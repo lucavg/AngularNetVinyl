@@ -10,7 +10,7 @@ import { ArtistResponse } from '../interfaces/Spotify/Search/ArtistResponse';
 })
 export class SearchComponent {
   searchQuery: string = '';
-  searchType: string = 'artist';
+  searchType: string = 'album';
   albumSearchResults: AlbumResponse[] = [];
   artistSearchResults: ArtistResponse[] = [];
   currentPage: number = 1;
