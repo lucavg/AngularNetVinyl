@@ -29,7 +29,7 @@
           </a>
           <a
             class="ml-4 text-white hover:text-gray-300"
-            [routerLink]="['/counter']"
+            [routerLink]="['/search']"
             [routerLinkActiveOptions]="{ exact: true }"
             routerLinkActive="text-gray-300"
             (click)="closeMenu()"
@@ -38,12 +38,12 @@
           </a>
           <a
             class="ml-4 text-white hover:text-gray-300"
-            [routerLink]="['/fetch-data']"
+            [routerLink]="['/collection']"
             [routerLinkActiveOptions]="{ exact: true }"
             routerLinkActive="text-gray-300"
             (click)="closeMenu()"
           >
-            Library
+            Collection
           </a>
           <ng-container *ngIf="!isLoggedIn()">
             <a
@@ -90,21 +90,21 @@
         </a>
         <a
           class="block text-center text-white hover:text-gray-300 py-2"
-          [routerLink]="['/counter']"
+          [routerLink]="['/search']"
           [routerLinkActiveOptions]="{ exact: true }"
           routerLinkActive="text-gray-300"
           (click)="closeMenu()"
         >
-          Counter
+          Search
         </a>
         <a
           class="block text-center text-white hover:text-gray-300 py-2"
-          [routerLink]="['/fetch-data']"
+          [routerLink]="['/collection']"
           [routerLinkActiveOptions]="{ exact: true }"
           routerLinkActive="text-gray-300"
           (click)="closeMenu()"
         >
-          Fetch data
+          Collection
         </a>
         <ng-container *ngIf="!isLoggedIn()">
           <a

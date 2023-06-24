@@ -23,6 +23,11 @@ export class NavMenuComponent {
     return this.authService.isLoggedIn();
   }
 
+  getUsername(): string {
+    const username = this.authService.getUsername();
+    return username;
+  }
+
   logout() {
     this.closeMenu();
     this.authService.logout();

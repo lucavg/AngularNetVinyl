@@ -4,10 +4,11 @@ using System.Security.Claims;
 using System.Text;
 using AngularNetVinyl.Data;
 using AngularNetVinyl.Dtos;
+using AngularNetVinyl.Entities.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 
 namespace AngularNetVinyl.Controllers
 {
@@ -17,9 +18,11 @@ namespace AngularNetVinyl.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
+        private readonly CollectionController _collectionController;
 
-        public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager)
+        public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager, CollectionController collectionController)
         {
+            _collectionController = collectionController;
             _userManager = userManager;
             _roleManager = roleManager;
         }
@@ -66,37 +69,58 @@ namespace AngularNetVinyl.Controllers
                     };
                 }
 
-                userExists = new User()
+                var collection = new Collection
                 {
-                    Email = request.Email,
-                    ConcurrencyStamp = Guid.NewGuid().ToString(),
-                    UserName = request.Username
+                    Name = $"{request.Username}'s collection",
                 };
 
-                var createUserResults = await _userManager.CreateAsync(userExists, request.Password);
-                if (!createUserResults.Succeeded)
+                var createCollectionResult = await _collectionController.CreateCollection(collection);
+                if (createCollectionResult.Result is CreatedAtActionResult createdResult)
                 {
-                    return new RegisterResponse
+                    if (createdResult.Value is Collection createdCollection)
                     {
-                        Success = false,
-                        Message = $"User creation failed: {createUserResults?.Errors.First()?.Description}"
-                    };
-                }
+                        // Associate the collection ID with the user
+                        var collectionId = createdCollection.Id.ToString();
+                        userExists = new User()
+                        {
+                            Email = request.Email,
+                            ConcurrencyStamp = Guid.NewGuid().ToString(),
+                            UserName = request.Username,
+                            CollectionId = collectionId
+                        };
 
-                var addUserToRoleResult = await _userManager.AddToRoleAsync(userExists, "User");
-                if (!addUserToRoleResult.Succeeded)
-                {
-                    return new RegisterResponse
-                    {
-                        Success = false,
-                        Message = $"User creation succeeded but could not add user to role: {addUserToRoleResult?.Errors.First()?.Description}"
-                    };
+                        var createUserResults = await _userManager.CreateAsync(userExists, request.Password);
+                        if (!createUserResults.Succeeded)
+                        {
+                            return new RegisterResponse
+                            {
+                                Success = false,
+                                Message = $"User creation failed: {createUserResults?.Errors.First()?.Description}"
+                            };
+                        }
+
+                        var addUserToRoleResult = await _userManager.AddToRoleAsync(userExists, "User");
+                        if (!addUserToRoleResult.Succeeded)
+                        {
+                            return new RegisterResponse
+                            {
+                                Success = false,
+                                Message = $"User creation succeeded but could not add user to role: {addUserToRoleResult?.Errors.First()?.Description}"
+                            };
+                        }
+
+                        return new RegisterResponse
+                        {
+                            Success = true,
+                            Message = "User registered successfully!"
+                        };
+                    }
                 }
 
                 return new RegisterResponse
                 {
-                    Success = true,
-                    Message = "User registered successfully!"
+                    Success = false,
+                    Message = "Failed to create the collection for the user."
                 };
             }
             catch (Exception ex)
@@ -109,6 +133,7 @@ namespace AngularNetVinyl.Controllers
                 };
             }
         }
+
 
         [HttpPost]
         [Route("login")]

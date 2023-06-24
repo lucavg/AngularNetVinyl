@@ -1,3 +1,4 @@
+using AngularNetVinyl.Entities.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AngularNetVinyl.Data

@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
-import { RegisterRequest } from '../interfaces/RegisterRequest';
-import { LoginRequest } from '../interfaces/LoginRequest';
-import { RegisterResponse } from '../interfaces/RegisterResponse';
-import { LoginResponse } from '../interfaces/LoginResponse';
+import { LoginRequest } from '../interfaces/Auth/LoginRequest';
+import { LoginResponse } from '../interfaces/Auth/LoginResponse';
+import { RegisterRequest } from '../interfaces/Auth/RegisterRequest';
 
 @Component({
   selector: 'app-register',

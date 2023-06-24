@@ -6,7 +6,11 @@ using Microsoft.AspNetCore.Identity;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
+using System;
 using System.Text;
+using AngularNetVinyl.Controllers;
+using MongoDB.Driver;
+using AngularNetVinyl.Entities.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,11 +46,13 @@ var mongoIdentityConfig = new MongoDbIdentityConfiguration
     }
 };
 
+builder.Services.AddHttpClient<SpotifyController>();
+
 builder.Services.ConfigureMongoDbIdentity<User, Role, Guid>(mongoIdentityConfig)
-.AddUserManager<UserManager<User>>()
-.AddSignInManager<SignInManager<User>>()
-.AddRoleManager<RoleManager<Role>>()
-.AddDefaultTokenProviders();
+    .AddUserManager<UserManager<User>>()
+    .AddSignInManager<SignInManager<User>>()
+    .AddRoleManager<RoleManager<Role>>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(x =>
 {
@@ -68,6 +74,12 @@ builder.Services.AddAuthentication(x =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"))
     };
 });
+
+// Register the MongoDatabase instance as a singleton
+var mongoClient = new MongoClient(mongoIdentityConfig.MongoDbSettings.ConnectionString);
+var mongoDatabase = mongoClient.GetDatabase(mongoIdentityConfig.MongoDbSettings.DatabaseName);
+builder.Services.AddSingleton(mongoDatabase);
+builder.Services.AddSingleton<CollectionController>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

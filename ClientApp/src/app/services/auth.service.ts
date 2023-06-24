@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { RegisterRequest } from '../interfaces/RegisterRequest';
-import { RegisterResponse } from '../interfaces/RegisterResponse';
-import { LoginRequest } from '../interfaces/LoginRequest';
-import { LoginResponse } from '../interfaces/LoginResponse';
+import { LoginRequest } from '../interfaces/Auth/LoginRequest';
 import jwt_decode from 'jwt-decode';
+import { LoginResponse } from '../interfaces/Auth/LoginResponse';
+import { RegisterRequest } from '../interfaces/Auth/RegisterRequest';
+import { RegisterResponse } from '../interfaces/Auth/RegisterResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +29,10 @@ export class AuthService {
     localStorage.removeItem('jwt');
     localStorage.removeItem('username');
     localStorage.removeItem('userId');
+  }
+
+  getUsername(): string {
+    return localStorage.getItem('username')!;
   }
 
   register(registerData: RegisterRequest): Observable<RegisterResponse> {
