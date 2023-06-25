@@ -36,8 +36,7 @@ namespace AngularNetVinyl.Controllers
         [Route("{id}")]
         public async Task<ActionResult<Album>> GetAlbum(string id)
         {
-            var objectId = new ObjectId(id);
-            var album = await _albumsCollection.Find(a => a.Id == objectId).FirstOrDefaultAsync();
+            var album = await _albumsCollection.Find(a => a.Id == id).FirstOrDefaultAsync();
             if (album == null)
             {
                 return NotFound();
@@ -46,29 +45,28 @@ namespace AngularNetVinyl.Controllers
         }
 
 
-        [HttpPut]
-        [Route("{id}")]
-        public async Task<IActionResult> UpdateAlbum(string id, Album album)
-        {
-            var objectId = new ObjectId(id);
-            var existingCollection = await _albumsCollection.FindOneAndUpdateAsync(
-                c => c.Id == objectId,
-                Builders<Album>.Update.Set(c => c.Rating, album.Rating));
+        // [HttpPut]
+        // [Route("{id}")]
+        // public async Task<IActionResult> UpdateAlbum(string id, Album album)
+        // {
+        //     var objectId = new ObjectId(id);
+        //     var existingCollection = await _albumsCollection.FindOneAndUpdateAsync(
+        //         c => c.Id == objectId,
+        //         Builders<Album>.Update.Set(c => c.Rating, album.Rating));
 
-            if (existingCollection == null)
-            {
-                return NotFound();
-            }
+        //     if (existingCollection == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
 
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteAlbum(string id)
         {
-            var objectId = new ObjectId(id);
-            var result = await _albumsCollection.DeleteOneAsync(a => a.Id == objectId);
+            var result = await _albumsCollection.DeleteOneAsync(a => a.Id == id);
             if (result.DeletedCount == 0)
             {
                 return NotFound();

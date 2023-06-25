@@ -4,7 +4,7 @@ import { User } from '../interfaces/User';
 import { Observable, of, switchMap } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
   private localStorageKey = 'userId';
@@ -14,7 +14,7 @@ export class UserService {
     @Inject('BASE_URL') private baseUrl: string
   ) {}
 
-  getUser(): Observable<User[]> {
+  getUser(): Observable<any> {
     var userId = localStorage.getItem(this.localStorageKey)!;
     return this.getUserAsync(userId).pipe(
       switchMap((response) => {
@@ -24,10 +24,10 @@ export class UserService {
     );
   }
 
-  getUserAsync(id: string): Observable<User[]> {
-    return this.http.get<User[]>(
-      this.baseUrl + 'api/v1/authenticate/users/' + id,
-      { headers: { 'Content-Type': 'application/json' } }
+  getUserAsync(id: string): Observable<any> {
+    return this.http.get<any>(
+      this.baseUrl + 'api/v1/authenticate/getCollectionId',
+      { headers: { 'Content-Type': 'application/json' }, params: { id: id } }
     );
   }
 }

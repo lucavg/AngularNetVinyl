@@ -29,6 +29,7 @@ export class AuthService {
     localStorage.removeItem('jwt');
     localStorage.removeItem('username');
     localStorage.removeItem('userId');
+    localStorage.removeItem('collectionId');
   }
 
   getUsername(): string {

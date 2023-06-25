@@ -2,6 +2,11 @@ import { Component } from '@angular/core';
 import { SpotifyService } from '../services/spotify.service';
 import { AlbumResponse } from '../interfaces/Spotify/Search/AlbumResponse';
 import { ArtistResponse } from '../interfaces/Spotify/Search/ArtistResponse';
+import { CollectionService } from '../services/collection.service';
+import { AuthService } from '../services/auth.service';
+import { Collection } from '../interfaces/Collection/Collection';
+import { CollectionResponse } from '../interfaces/Collection/CollectionResponse';
+import { CollectionAlbum } from '../interfaces/Collection/CollectionAlbum';
 
 @Component({
   selector: 'app-search',
@@ -16,7 +21,11 @@ export class SearchComponent {
   currentPage: number = 1;
   itemsPerPage: number = 9;
 
-  constructor(private spotifyService: SpotifyService) {}
+  constructor(
+    private spotifyService: SpotifyService,
+    private collectionService: CollectionService,
+    private authService: AuthService
+  ) {}
 
   search(): void {
     switch (this.searchType) {
@@ -60,6 +69,20 @@ export class SearchComponent {
         },
         next: (response: any) => {
           this.albumSearchResults = response.albums.items;
+
+          if (this.authService.isLoggedIn()) {
+            var collectionId = localStorage.getItem('collectionId');
+            this.collectionService
+              .getCollection(collectionId!)
+              .subscribe((collection: CollectionResponse) => {
+                this.albumSearchResults.forEach((album: AlbumResponse) => {
+                  const foundAlbum = collection.albums.find(
+                    (cAlbum: CollectionAlbum) => cAlbum.id === album.id
+                  );
+                  album.added_to_collection = !!foundAlbum;
+                });
+              });
+          }
         },
       });
     } catch (error) {

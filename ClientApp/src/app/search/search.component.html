@@ -37,30 +37,16 @@
   <ng-container
     *ngIf="albumSearchResults.length != 0 || artistSearchResults.length != 0"
   >
-    <ng-container *ngIf="artistSearchResults.length != 0">
-      <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <div
-          *ngFor="
-            let result of artistSearchResults
-              | pagination : currentPage : itemsPerPage
-          "
-        >
-          <app-artist [artist]="result"></app-artist>
-        </div>
+    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div
+        *ngFor="
+          let result of albumSearchResults
+            | pagination : currentPage : itemsPerPage
+        "
+      >
+        <app-album [album]="result"></app-album>
       </div>
-    </ng-container>
-    <ng-container *ngIf="albumSearchResults.length != 0">
-      <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <div
-          *ngFor="
-            let result of albumSearchResults
-              | pagination : currentPage : itemsPerPage
-          "
-        >
-          <app-album [album]="result"></app-album>
-        </div>
-      </div>
-    </ng-container>
+    </div>
 
     <div class="mt-4">
       <ul class="flex justify-center space-x-2">

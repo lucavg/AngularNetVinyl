@@ -7,5 +7,6 @@ namespace AngularNetVinyl.Data
         public string AccessToken { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public string UserId { get; set; } = string.Empty;
+        public string CollectionId { get; set; } = string.Empty;
     }
 }

@@ -19,14 +19,12 @@ namespace AngularNetVinyl.Controllers
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly CollectionController _collectionController;
-        private readonly IMongoCollection<User> _usersCollection;
 
-        public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager, CollectionController collectionController, IMongoDatabase database)
+        public AuthController(UserManager<User> userManager, RoleManager<Role> roleManager, CollectionController collectionController)
         {
             _collectionController = collectionController;
             _userManager = userManager;
             _roleManager = roleManager;
-            _usersCollection = database.GetCollection<User>("users");
         }
 
         [HttpPost]
@@ -81,7 +79,6 @@ namespace AngularNetVinyl.Controllers
                 {
                     if (createdResult.Value is Collection createdCollection)
                     {
-                        // Associate the collection ID with the user
                         var collectionId = createdCollection.Id.ToString();
                         userExists = new User()
                         {
@@ -199,6 +196,7 @@ namespace AngularNetVinyl.Controllers
                     Username = user.UserName!,
                     Success = true,
                     UserId = user.Id.ToString(),
+                    CollectionId = user.CollectionId,
                 };
             }
             catch (Exception ex)
@@ -209,31 +207,6 @@ namespace AngularNetVinyl.Controllers
                     Success = false,
                     Message = ex.Message
                 };
-            }
-        }
-
-        [HttpGet]
-        [Route("users/get")]
-        public async Task<IActionResult> GetUserCollectionById(string id)
-        {
-            try
-            {
-                var filter = Builders<User>.Filter.Eq("Id", id);
-                var projection = Builders<User>.Projection.Include("CollectionId");
-                var user = await _usersCollection.Find(filter).Project(projection).FirstOrDefaultAsync();
-                Console.WriteLine(user);
-
-                if (user == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(user);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return BadRequest();
             }
         }
     }

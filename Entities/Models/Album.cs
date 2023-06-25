@@ -6,8 +6,6 @@ namespace AngularNetVinyl.Entities.Models
     [CollectionName("albums")]
     public class Album
     {
-        public ObjectId Id { get; set; }
-        public int Rating { get; set; }
-
+        public string Id { get; set; } = string.Empty;
     }
 }

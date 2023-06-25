@@ -4,4 +4,5 @@ export interface LoginResponse {
   accessToken: string;
   username: string;
   userId: string;
+  collectionId: string;
 }

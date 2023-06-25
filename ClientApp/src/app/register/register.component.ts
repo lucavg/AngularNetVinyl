@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { LoginRequest } from '../interfaces/Auth/LoginRequest';
@@ -15,7 +15,11 @@ export class RegisterComponent {
   password: string = '';
   confirmPassword: string = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   register() {
     if (this.password !== this.confirmPassword) {
@@ -42,6 +46,8 @@ export class RegisterComponent {
               localStorage.setItem('jwt', response.accessToken);
               localStorage.setItem('username', response.username);
               localStorage.setItem('userId', response.userId);
+              localStorage.setItem('collectionId', response.collectionId);
+              this.cdRef.detectChanges();
               this.router.navigate(['/']);
             },
             error: () => {

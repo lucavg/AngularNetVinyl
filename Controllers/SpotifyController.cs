@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using AngularNetVinyl.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -61,6 +62,33 @@ namespace AngularNetVinyl.Controllers
             }
 
             string url = $"https://api.spotify.com/v1/search?q={query}&limit=36&type=artist&market=BE";
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_authResponse.Access_token}");
+
+            HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                return Ok(jsonResponse);
+            }
+            else
+            {
+                return StatusCode((int)response.StatusCode);
+            }
+        }
+
+        [HttpGet]
+        [Route("get/album")]
+        public async Task<IActionResult> GetAlbum(string query)
+        {
+            if (_authResponse.Access_token == string.Empty || (DateTime.Now.AddSeconds(_authResponse.Expires_in) - _authResponse.Received_at).TotalSeconds > _authResponse.Expires_in)
+            {
+                await Authenticate();
+            }
+
+            string url = $"https://api.spotify.com/v1/albums/{query}?market=BE";
 
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_authResponse.Access_token}");

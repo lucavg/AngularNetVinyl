@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AngularNetVinyl.Dtos;
 using AngularNetVinyl.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -30,7 +31,7 @@ namespace AngularNetVinyl.Controllers
         }
 
         [HttpGet]
-        [Route("{id}")]
+        [Route("get")]
         public async Task<ActionResult<Collection>> GetCollection(string id)
         {
             var objectId = new ObjectId(id);
@@ -51,7 +52,7 @@ namespace AngularNetVinyl.Controllers
         }
 
         [HttpPut]
-        [Route("{id}")]
+        [Route("update")]
         public async Task<IActionResult> UpdateCollection(string id, Collection collection)
         {
             var objectId = new ObjectId(id);
@@ -68,7 +69,7 @@ namespace AngularNetVinyl.Controllers
         }
 
         [HttpDelete]
-        [Route("{id}")]
+        [Route("delete")]
         public async Task<IActionResult> DeleteCollection(string id)
         {
             var objectId = new ObjectId(id);
@@ -81,17 +82,23 @@ namespace AngularNetVinyl.Controllers
         }
 
         [HttpPost]
-        [Route("{collectionId}/add-album")]
-        public async Task<IActionResult> AddAlbumToCollection(string collectionId, Album album)
+        [Route("addAlbum")]
+        public async Task<IActionResult> AddAlbumToCollection([FromBody] AddAlbumRequest request)
         {
-            var objectId = new ObjectId(collectionId);
+            if (!ObjectId.TryParse(request.CollectionId, out var objectId))
+            {
+                return BadRequest("Invalid collectionId.");
+            }
+
+            var album = new Album()
+            {
+                Id = request.AlbumId
+            };
             var collection = await _collectionsCollection.Find(c => c.Id == objectId).FirstOrDefaultAsync();
             if (collection == null)
             {
                 return NotFound("Collection not found.");
             }
-
-            album.Id = ObjectId.GenerateNewId();
 
             collection.Albums.Add(album);
 
@@ -99,52 +106,59 @@ namespace AngularNetVinyl.Controllers
             return CreatedAtAction(nameof(GetCollection), new { id = collection.Id }, collection);
         }
 
-        [HttpPut]
-        [Route("{collectionId}/update-album/{albumId}")]
-        public async Task<IActionResult> UpdateAlbumInCollection(string collectionId, string albumId, Album album)
+
+        // [HttpPut]
+        // [Route("updateAlbum")]
+        // public async Task<IActionResult> UpdateAlbumInCollection(string collectionId, string albumId, Album album)
+        // {
+        //     var collectionObjectId = new ObjectId(collectionId);
+        //     var collection = await _collectionsCollection.Find(c => c.Id == collectionObjectId).FirstOrDefaultAsync();
+        //     if (collection == null)
+        //     {
+        //         return NotFound("Collection not found.");
+        //     }
+
+        //     var albumObjectId = new ObjectId(albumId);
+        //     var existingAlbum = collection.Albums.Find(a => a.Id == albumObjectId);
+        //     if (existingAlbum == null)
+        //     {
+        //         return NotFound("Album not found in the collection.");
+        //     }
+
+        //     // existingAlbum.Rating = album.Rating;
+
+        //     await _collectionsCollection.ReplaceOneAsync(c => c.Id == collectionObjectId, collection);
+        //     return NoContent();
+        // }
+
+        [HttpPost]
+        [Route("removeAlbum")]
+        public async Task<IActionResult> RemoveAlbumFromCollection([FromBody] RemoveAlbumRequest request)
         {
-            var collectionObjectId = new ObjectId(collectionId);
-            var collection = await _collectionsCollection.Find(c => c.Id == collectionObjectId).FirstOrDefaultAsync();
-            if (collection == null)
+            if (!ObjectId.TryParse(request.CollectionId, out var collectionObjectId))
             {
-                return NotFound("Collection not found.");
+                return BadRequest("Invalid collectionId.");
             }
 
-            var albumObjectId = new ObjectId(albumId);
-            var existingAlbum = collection.Albums.Find(a => a.Id == albumObjectId);
-            if (existingAlbum == null)
+            try
             {
-                return NotFound("Album not found in the collection.");
+                var collectionFilter = Builders<Collection>.Filter.Eq(c => c.Id, collectionObjectId);
+                var update = Builders<Collection>.Update.PullFilter(c => c.Albums, a => a.Id == request.AlbumId);
+                var updateResult = await _collectionsCollection.UpdateOneAsync(collectionFilter, update);
+
+                if (updateResult.MatchedCount == 0)
+                {
+                    return NotFound("Collection not found.");
+                }
+
+                return Ok("Album removed from collection.");
             }
-
-            existingAlbum.Rating = album.Rating;
-
-            await _collectionsCollection.ReplaceOneAsync(c => c.Id == collectionObjectId, collection);
-            return NoContent();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to remove album from collection.");
+            }
         }
 
-        [HttpDelete]
-        [Route("{collectionId}/remove-album/{albumId}")]
-        public async Task<IActionResult> RemoveAlbumFromCollection(string collectionId, string albumId)
-        {
-            var collectionObjectId = new ObjectId(collectionId);
-            var collection = await _collectionsCollection.Find(c => c.Id == collectionObjectId).FirstOrDefaultAsync();
-            if (collection == null)
-            {
-                return NotFound("Collection not found.");
-            }
-
-            var albumObjectId = new ObjectId(albumId);
-            var albumToRemove = collection.Albums.Find(a => a.Id == albumObjectId);
-            if (albumToRemove == null)
-            {
-                return NotFound("Album not found in the collection.");
-            }
-
-            collection.Albums.Remove(albumToRemove);
-
-            await _collectionsCollection.ReplaceOneAsync(c => c.Id == collectionObjectId, collection);
-            return NoContent();
-        }
     }
 }
