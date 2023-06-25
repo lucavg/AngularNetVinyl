@@ -16,6 +16,10 @@ export class FullAlbumComponent {
     return this.album.artists[0].name || '';
   }
 
+  getSpotifyLink(): string | undefined {
+    return this.album.external_urls.spotify;
+  }
+
   removeFromFavorites(): void {
     const collectionId = localStorage.getItem('collectionId');
     if (collectionId !== null) {
