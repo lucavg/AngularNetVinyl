@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { AlbumResponse } from 'src/app/interfaces/Spotify/Search/AlbumResponse';
 import { CollectionService } from 'src/app/services/collection.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { RefreshService } from 'src/app/services/refresh.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-album',
@@ -12,7 +14,8 @@ export class AlbumComponent {
 
   constructor(
     private collectionService: CollectionService,
-    private cdRef: ChangeDetectorRef
+    private refreshService: RefreshService,
+    private toastr: ToastrService
   ) {}
 
   AlbumComponent(album: AlbumResponse) {
@@ -21,6 +24,10 @@ export class AlbumComponent {
 
   getArtistName(): string {
     return this.album.artists[0].name;
+  }
+
+  getAddedToCollection(): boolean {
+    return this.album.added_to_collection;
   }
 
   addToFavorites() {
@@ -35,7 +42,8 @@ export class AlbumComponent {
             },
             next: () => {
               this.album.added_to_collection = true;
-              this.cdRef.detectChanges();
+              this.refreshService.triggerRefresh();
+              this.toastr.info('Album added to favorites!');
             },
           });
       }
@@ -52,11 +60,12 @@ export class AlbumComponent {
           .removeAlbumFromCollection(collectionId, this.album)
           .subscribe({
             error: (response) => {
-              console.log('Search failed: ' + response.message);
+              this.toastr.error('Failed to remove album from favorites!');
             },
             next: () => {
               this.album.added_to_collection = false;
-              this.cdRef.detectChanges();
+              this.refreshService.triggerRefresh();
+              this.toastr.info('Album removed from favorites!');
             },
           });
       }

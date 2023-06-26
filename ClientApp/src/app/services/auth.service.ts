@@ -7,6 +7,7 @@ import jwt_decode from 'jwt-decode';
 import { LoginResponse } from '../interfaces/Auth/LoginResponse';
 import { RegisterRequest } from '../interfaces/Auth/RegisterRequest';
 import { RegisterResponse } from '../interfaces/Auth/RegisterResponse';
+import { RefreshService } from './refresh.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,12 +17,14 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
+    private refreshService: RefreshService,
     @Inject('BASE_URL') private baseUrl: string
   ) {
     this.isAuthenticated = this.checkTokenValidity();
   }
 
   isLoggedIn(): boolean {
+    this.isAuthenticated = this.checkTokenValidity();
     return this.isAuthenticated;
   }
 
@@ -40,6 +43,7 @@ export class AuthService {
     this.cleanStorage();
     return this.registerAsync(registerData).pipe(
       switchMap((response: RegisterResponse) => {
+        this.refreshService.triggerRefresh();
         return of(response);
       })
     );
@@ -57,6 +61,7 @@ export class AuthService {
     this.cleanStorage();
     return this.loginAsync(loginData).pipe(
       switchMap((response: LoginResponse) => {
+        this.refreshService.triggerRefresh();
         return of(response);
       })
     );
@@ -75,6 +80,7 @@ export class AuthService {
   logout() {
     this.cleanStorage();
     this.isAuthenticated = false;
+    this.refreshService.triggerRefresh();
   }
 
   private checkTokenValidity(): boolean {

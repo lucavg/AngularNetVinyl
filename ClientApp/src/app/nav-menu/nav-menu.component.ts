@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
+import { RefreshService } from '../services/refresh.service';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-nav-menu',
@@ -9,7 +12,18 @@ import { AuthService } from 'src/app/services/auth.service';
 export class NavMenuComponent {
   isExpanded: boolean = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private refreshService: RefreshService,
+    private router: Router,
+    private toastr: ToastrService
+  ) {}
+
+  ngOnInit() {
+    this.refreshService.refresh$.subscribe(() => {
+      this.isLoggedIn();
+    });
+  }
 
   toggle() {
     this.isExpanded = !this.isExpanded;
@@ -31,5 +45,8 @@ export class NavMenuComponent {
   logout() {
     this.closeMenu();
     this.authService.logout();
+    this.refreshService.triggerRefresh();
+    this.toastr.info('Logged out!');
+    this.router.navigate(['/']);
   }
 }

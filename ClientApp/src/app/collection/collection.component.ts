@@ -5,6 +5,7 @@ import { AlbumResponse } from '../interfaces/Spotify/Search/AlbumResponse';
 import { SpotifyService } from '../services/spotify.service';
 import { AlbumComplete } from '../interfaces/Spotify/Search/AlbumComplete';
 import { Observable, forkJoin, switchMap, tap } from 'rxjs';
+import { RefreshService } from '../services/refresh.service';
 
 @Component({
   selector: 'app-collection',
@@ -18,14 +19,21 @@ export class CollectionComponent implements OnInit {
   currentPage = 1;
   itemsPerPage = 9;
   collectionId = localStorage.getItem('collectionId');
-  loading = true;
 
   constructor(
     private collectionService: CollectionService,
-    private spotifyService: SpotifyService
+    private spotifyService: SpotifyService,
+    private refreshService: RefreshService
   ) {}
 
   ngOnInit(): void {
+    this.refreshService.refresh$.subscribe(() => {
+      this.loadData();
+      this.searchControl.valueChanges.subscribe((searchTerm) => {
+        this.filterAlbums(searchTerm!);
+      });
+    });
+
     this.loadData();
     this.searchControl.valueChanges.subscribe((searchTerm) => {
       this.filterAlbums(searchTerm!);
@@ -36,7 +44,6 @@ export class CollectionComponent implements OnInit {
     this.loadCollection().subscribe(() => {
       this.filteredAlbums = this.albums;
       this.filterAlbums(this.searchControl.value!);
-      this.loading = false; // Set loading to false after all albums are loaded
     });
   }
 

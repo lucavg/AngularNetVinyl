@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { LoginRequest } from '../interfaces/Auth/LoginRequest';
 import { LoginResponse } from '../interfaces/Auth/LoginResponse';
 import { ChangeDetectorRef } from '@angular/core';
+import { RefreshService } from '../services/refresh.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -16,9 +18,12 @@ export class LoginComponent {
 
   constructor(
     private authService: AuthService,
+    private refreshService: RefreshService,
     private router: Router,
-    private cdRef: ChangeDetectorRef
+    private toastr: ToastrService
   ) {}
+
+  ngOnInit(): void {}
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -37,11 +42,12 @@ export class LoginComponent {
           localStorage.setItem('username', response.username);
           localStorage.setItem('userId', response.userId);
           localStorage.setItem('collectionId', response.collectionId);
-          this.cdRef.detectChanges();
+          this.refreshService.triggerRefresh();
           this.router.navigate(['/']);
+          this.toastr.success('Login successful!');
         },
         error: (response) => {
-          console.log('Login failed: ' + response.message);
+          this.toastr.error('Login failed', response.message);
         },
       });
     } catch (error) {

@@ -10,7 +10,7 @@
       class="object-cover w-full h-full rounded-md"
     />
     <button
-      *ngIf="album.added_to_collection == true"
+      *ngIf="getAddedToCollection()"
       class="absolute top-0 right-0 p-2 rounded-25 bg-green-500 hover:bg-red-600 focus:outline-none transition-colors"
       (click)="removeFromFavorites()"
     >
@@ -30,7 +30,7 @@
       </svg>
     </button>
     <button
-      *ngIf="album.added_to_collection == false"
+      *ngIf="!getAddedToCollection()"
       class="absolute top-0 right-0 p-2 rounded-25 bg-gray-300 hover:bg-green-500 focus:outline-none transition-colors"
       (click)="addToFavorites()"
     >

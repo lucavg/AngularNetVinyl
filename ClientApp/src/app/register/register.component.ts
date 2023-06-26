@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { LoginRequest } from '../interfaces/Auth/LoginRequest';
 import { LoginResponse } from '../interfaces/Auth/LoginResponse';
 import { RegisterRequest } from '../interfaces/Auth/RegisterRequest';
+import { RefreshService } from '../services/refresh.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
@@ -18,7 +20,8 @@ export class RegisterComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private cdRef: ChangeDetectorRef
+    private refreshService: RefreshService,
+    private toastr: ToastrService
   ) {}
 
   register() {
@@ -47,20 +50,21 @@ export class RegisterComponent {
               localStorage.setItem('username', response.username);
               localStorage.setItem('userId', response.userId);
               localStorage.setItem('collectionId', response.collectionId);
-              this.cdRef.detectChanges();
+              this.refreshService.triggerRefresh();
               this.router.navigate(['/']);
+              this.toastr.success('Registration successful!');
             },
-            error: () => {
-              console.log('Login failed');
+            error: (response) => {
+              this.toastr.error('Registration failed', response.message);
             },
           });
         },
-        error: () => {
-          console.log('Registration failed');
+        error: (response) => {
+          this.toastr.error('Registration failed', response.message);
         },
       });
-    } catch (error) {
-      console.log(error);
+    } catch (response) {
+      this.toastr.error('Registration failed');
     }
   }
 }

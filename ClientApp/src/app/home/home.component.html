@@ -1,28 +1,57 @@
-<h1 class="text-3xl font-bold mb-4">Hello, world!</h1>
-<p class="text-gray-600 mb-4">Welcome to your new single-page application, built with:</p>
-<ul class="list-disc list-inside mb-4">
-  <li>
-    <a class="text-blue-500" href='https://get.asp.net/'>ASP.NET Core</a> and
-    <a class="text-blue-500" href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for cross-platform server-side code
-  </li>
-  <li>
-    <a class="text-blue-500" href='https://angular.io/'>Angular</a> and
-    <a class="text-blue-500" href='http://www.typescriptlang.org/'>TypeScript</a> for client-side code
-  </li>
-  <li>
-    <a class="text-blue-500" href='http://getbootstrap.com/'>Bootstrap</a> for layout and styling
-  </li>
-</ul>
-<p class="mb-4">To help you get started, we've also set up:</p>
-<ul class="list-disc list-inside mb-4">
-  <li>
-    <strong>Client-side navigation</strong>. For example, click <em>Counter</em> then <em>Back</em> to return here.
-  </li>
-  <li>
-    <strong>Angular CLI integration</strong>. In development mode, there's no need to run <code>ng serve</code>. It runs in the background automatically, so your client-side resources are dynamically built on demand and the page refreshes when you modify any file.
-  </li>
-  <li>
-    <strong>Efficient production builds</strong>. In production mode, development-time features are disabled, and your <code>dotnet publish</code> configuration automatically invokes <code>ng build</code> to produce minified, ahead-of-time compiled JavaScript files.
-  </li>
-</ul>
-<p class="mb-4">The <code>ClientApp</code> subdirectory is a standard Angular CLI application. If you open a command prompt in that directory, you can run any <code>ng</code> command (e.g., <code>ng test</code>), or use <code>npm</code> to install extra packages into it.</p>
+<main class="container mx-auto py-12">
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-gray-900">Welcome to VinylVault!</h1>
+    <p class="mt-2 text-lg text-gray-700">Discover the possibilities</p>
+  </div>
+
+  <div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <div class="bg-white shadow-lg rounded-lg p-6">
+      <h2 class="text-xl font-semibold text-gray-900">
+        Album Search Functionality
+      </h2>
+      <p class="mt-2 text-gray-700">
+        Easily search for your favorite albums and discover new music.
+      </p>
+    </div>
+    <div class="bg-white shadow-lg rounded-lg p-6">
+      <h2 class="text-xl font-semibold text-gray-900">Spotify Integration</h2>
+      <p class="mt-2 text-gray-700">
+        Seamlessly integrate with Spotify to access a vast library of music.
+      </p>
+    </div>
+    <div class="bg-white shadow-lg rounded-lg p-6">
+      <h2 class="text-xl font-semibold text-gray-900">Favorite Albums</h2>
+      <p class="mt-2 text-gray-700">
+        Store and manage all your favorite albums in one place.
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-12 text-center">
+    <p class="text-gray-700">Ready to get started?</p>
+    <ng-container *ngIf="!isLoggedIn()">
+      <a
+        href="/login"
+        class="mt-4 mx-2 inline-block px-6 py-3 rounded-md bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors duration-300"
+        >Login</a
+      >
+      <a
+        href="/register"
+        class="mt-4 mx-2 inline-block px-6 py-3 rounded-xl bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400 transition-colors duration-300"
+        >Register</a
+      >
+    </ng-container>
+    <ng-container *ngIf="isLoggedIn()">
+      <a
+        href="/search"
+        class="mt-4 mx-2 inline-block px-6 py-3 rounded-md bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors duration-300"
+        >Search</a
+      >
+      <a
+        href="/collection"
+        class="mt-4 mx-2 inline-block px-6 py-3 rounded-md bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400 transition-colors duration-300"
+        >Collection</a
+      >
+    </ng-container>
+  </div>
+</main>

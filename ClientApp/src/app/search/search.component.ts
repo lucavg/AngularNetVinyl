@@ -7,6 +7,7 @@ import { AuthService } from '../services/auth.service';
 import { Collection } from '../interfaces/Collection/Collection';
 import { CollectionResponse } from '../interfaces/Collection/CollectionResponse';
 import { CollectionAlbum } from '../interfaces/Collection/CollectionAlbum';
+import { RefreshService } from '../services/refresh.service';
 
 @Component({
   selector: 'app-search',
